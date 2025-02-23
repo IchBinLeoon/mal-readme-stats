@@ -1,4 +1,5 @@
 use crate::models::{AnimeList, MangaList, ReadStatus, WatchStatus};
+use crate::utils::fetch_image_base64;
 use quick_xml::escape::minimal_escape;
 
 const ACTIVITY_PADDING: usize = 15;
@@ -23,11 +24,11 @@ const COLOR_GRAY: &str = "#6f6f6f";
 const COLOR_BACKGROUND: &str = "#111111";
 
 pub trait ToSvg {
-    fn to_svg(&self) -> String;
+    fn to_svg(&self) -> impl Future<Output = String>;
 }
 
 impl ToSvg for AnimeList {
-    fn to_svg(&self) -> String {
+    async fn to_svg(&self) -> String {
         let mut svg = String::new();
 
         let height =
@@ -47,10 +48,12 @@ impl ToSvg for AnimeList {
             let y_offset = index * ACTIVITY_ENTRY_HEIGHT + (index + 1) * ACTIVITY_PADDING;
 
             if let Some(picture) = &entry.node.main_picture {
-                svg.push_str(&format!(
-                    r#"<a href="https://myanimelist.net/anime/{}" target="_blank"><image x="{}" y="{}" width="{}" height="{}" href="{}"/></a>"#,
-                    entry.node.id, ACTIVITY_PADDING, y_offset, ACTIVITY_IMAGE_WIDTH, ACTIVITY_IMAGE_HEIGHT, picture.medium
-                ));
+                if let Some(image) = fetch_image_base64(&picture.medium).await {
+                    svg.push_str(&format!(
+                        r#"<a href="https://myanimelist.net/anime/{}" target="_blank"><image x="{}" y="{}" width="{}" height="{}" href="data:image/png;base64,{}"/></a>"#,
+                        entry.node.id, ACTIVITY_PADDING, y_offset, ACTIVITY_IMAGE_WIDTH, ACTIVITY_IMAGE_HEIGHT, image
+                    ));
+                }
             }
 
             let title = if entry.node.title.len() > ACTIVITY_TITLE_MAX_LENGTH {
@@ -139,7 +142,7 @@ impl ToSvg for AnimeList {
 }
 
 impl ToSvg for MangaList {
-    fn to_svg(&self) -> String {
+    async fn to_svg(&self) -> String {
         let mut svg = String::new();
 
         let height =
@@ -159,10 +162,12 @@ impl ToSvg for MangaList {
             let y_offset = index * ACTIVITY_ENTRY_HEIGHT + (index + 1) * ACTIVITY_PADDING;
 
             if let Some(picture) = &entry.node.main_picture {
-                svg.push_str(&format!(
-                    r#"<a href="https://myanimelist.net/manga/{}" target="_blank"><image x="{}" y="{}" width="{}" height="{}" href="{}"/></a>"#,
-                    entry.node.id, ACTIVITY_PADDING, y_offset, ACTIVITY_IMAGE_WIDTH, ACTIVITY_IMAGE_HEIGHT, picture.medium
-                ));
+                if let Some(image) = fetch_image_base64(&picture.medium).await {
+                    svg.push_str(&format!(
+                        r#"<a href="https://myanimelist.net/manga/{}" target="_blank"><image x="{}" y="{}" width="{}" height="{}" href="data:image/png;base64,{}"/></a>"#,
+                        entry.node.id, ACTIVITY_PADDING, y_offset, ACTIVITY_IMAGE_WIDTH, ACTIVITY_IMAGE_HEIGHT, image
+                    ));
+                }
             }
 
             let title = if entry.node.title.len() > ACTIVITY_TITLE_MAX_LENGTH {

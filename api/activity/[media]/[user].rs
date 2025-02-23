@@ -20,8 +20,20 @@ pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
     let client = MalClient::new()?;
 
     let svg = match media {
-        Media::Anime => client.get_user_anime_activity(user, limit).await?.to_svg(),
-        Media::Manga => client.get_user_manga_activity(user, limit).await?.to_svg(),
+        Media::Anime => {
+            client
+                .get_user_anime_activity(user, limit)
+                .await?
+                .to_svg()
+                .await
+        }
+        Media::Manga => {
+            client
+                .get_user_manga_activity(user, limit)
+                .await?
+                .to_svg()
+                .await
+        }
     };
 
     Ok(Response::builder()
