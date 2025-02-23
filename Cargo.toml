@@ -1,0 +1,27 @@
+[package]
+name = "mal-readme-stats"
+version = "0.1.0"
+authors = ["IchBinLeoon"]
+edition = "2024"
+description = "Dynamically generated MyAnimeList stats for your profile readme"
+license = "MIT"
+
+[[bin]]
+name = "activity"
+path = "api/activity/[media]/[user].rs"
+
+[dependencies]
+anyhow = "1.0.95"
+chrono = { version = "0.4.39", features = ["serde"] }
+quick-xml = "0.37.2"
+reqwest = { version = "0.12.12", features = ["json"] }
+serde = { version = "1.0.217", features = ["derive"] }
+strum = { version = "0.27.1", features = ["derive"] }
+tokio = { version = "1.43.0", features = ["macros"] }
+url = "2.5.4"
+vercel_runtime = "1.1.4"
+
+[profile.release]
+opt-level = "z"
+strip = true
+lto = true
