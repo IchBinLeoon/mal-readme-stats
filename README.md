@@ -22,7 +22,7 @@ Replace `[media]` with either `anime` or `manga` and `[user]` with your MyAnimeL
 
 ### Activity
 ```
-[![Activity](https://mal-readme-stats-ichbinleoons-projects.vercel.app/api/activity/[media]/[user])](https://github.com/IchBinLeoon/mal-readme-stats)
+[![Activity](https://mal-readme-stats.vercel.app/api/activity/[media]/[user])](https://github.com/IchBinLeoon/mal-readme-stats)
 ```
 
 You can pass the query parameter `?limit=` to specify the number of entries. The minimum is 1, the maximum is 10, and the default is 5.
@@ -30,14 +30,14 @@ You can pass the query parameter `?limit=` to specify the number of entries. The
 <details>
 <summary>Show anime example</summary>
 
-[![Anime Activity](https://mal-readme-stats-ichbinleoons-projects.vercel.app/api/activity/anime/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
+[![Anime Activity](https://mal-readme-stats.vercel.app/api/activity/anime/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
 
 </details>
 
 <details>
 <summary>Show manga example</summary>
 
-[![Manga Activity](https://mal-readme-stats-ichbinleoons-projects.vercel.app/api/activity/manga/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
+[![Manga Activity](https://mal-readme-stats.vercel.app/api/activity/manga/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
 
 </details>
 
