@@ -132,7 +132,7 @@ impl ToSvg for AnimeList {
                 r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
                 ACTIVITY_WIDTH - ACTIVITY_PADDING,
                 y_offset + 80,
-                entry.list_status.updated_at.format("%b %d, %Y %H:%M %p").to_string(),
+                entry.list_status.updated_at.format("%b %d, %Y %H:%M %p"),
             ));
         }
 
@@ -213,12 +213,10 @@ impl ToSvg for MangaList {
             if entry.list_status.status != ReadStatus::PlanToRead {
                 let chapters = if entry.node.num_chapters > 0 {
                     entry.node.num_chapters
+                } else if entry.list_status.num_chapters_read > 0 {
+                    entry.list_status.num_chapters_read * 2
                 } else {
-                    if entry.list_status.num_chapters_read > 0 {
-                        entry.list_status.num_chapters_read * 2
-                    } else {
-                        1
-                    }
+                    1
                 };
 
                 svg.push_str(&format!(
@@ -253,7 +251,7 @@ impl ToSvg for MangaList {
                 r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
                 ACTIVITY_WIDTH - ACTIVITY_PADDING,
                 y_offset + 80,
-                entry.list_status.updated_at.format("%b %d, %Y %H:%M %p").to_string(),
+                entry.list_status.updated_at.format("%b %d, %Y %H:%M %p"),
             ));
         }
 

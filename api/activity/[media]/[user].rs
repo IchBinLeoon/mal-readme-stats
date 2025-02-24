@@ -13,7 +13,7 @@ async fn main() -> Result<(), Error> {
 pub async fn handler(req: Request) -> Result<Response<Body>, Error> {
     let params = QueryParams::from_request(&req)?;
 
-    let media = Media::from_str(&params.get("media").unwrap())?;
+    let media = Media::from_str(params.get("media").unwrap())?;
     let user = params.get("user").unwrap();
     let limit = params.get("limit").and_then(|s| s.parse().ok());
 

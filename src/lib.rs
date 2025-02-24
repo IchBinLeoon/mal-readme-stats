@@ -37,7 +37,7 @@ impl MalClient {
             let mut pairs = url.query_pairs_mut();
 
             for (key, value) in params {
-                pairs.append_pair(key, &value.to_string());
+                pairs.append_pair(key, value);
             }
         };
 
@@ -79,11 +79,8 @@ impl MalClient {
             ("limit", &limit),
         ];
 
-        self.request(
-            &format!("users/{}/{}list", user, media.to_string()),
-            Some(params),
-        )
-        .await
+        self.request(&format!("users/{}/{}list", user, media), Some(params))
+            .await
     }
 
     pub async fn get_user_anime_activity(
