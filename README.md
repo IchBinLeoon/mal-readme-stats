@@ -3,6 +3,18 @@
 <p align="center">Dynamically generated MyAnimeList stats for your profile readme</p>
 
 <p align="center">
+  <a href="https://github.com/IchBinLeoon/mal-readme-stats/deployments/Production">
+    <img src="https://img.shields.io/github/deployments/IchBinLeoon/mal-readme-stats/production?style=flat-square&label=Production" alt="Production">
+  </a>
+  <a href="https://github.com/IchBinLeoon/mal-readme-stats/commits/main">
+    <img src="https://img.shields.io/github/last-commit/IchBinLeoon/mal-readme-stats?style=flat-square" alt="Commit">
+  </a>
+  <a href="https://github.com/IchBinLeoon/mal-readme-stats/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/IchBinLeoon/mal-readme-stats?style=flat-square" alt="License">
+  </a>
+</p>
+
+<p align="center">
   <a href="#-Why">Why? 🤔</a>
   •
   <a href="#-Usage">Usage 🚀</a>
@@ -47,11 +59,19 @@ _Coming soon..._
 ## 🔧 Deploy your own
 
 ### Vercel
-1. Register or log in to [Vercel](https://vercel.com)
-2. Fork this repository and import it
-3. Create a MyAnimeList API Application [here](https://myanimelist.net/apiconfig/create)
-4. Set the environment variable `CLIENT_ID` to your Client ID
-5. Deploy! Check your project domains to use the API 🎉
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FIchBinLeoon%2Fmal-readme-stats&env=CLIENT_ID&envDescription=MyAnimeList%20Application%20Client%20ID)
+
+<details>
+<summary>Step-by-step guide</summary>
+
+1. Register or log in to [Vercel](https://vercel.com).
+2. Fork this repository and import it.
+3. Create a MyAnimeList application [here](https://myanimelist.net/apiconfig/create).
+4. Set the environment variable `CLIENT_ID` to your client ID.
+5. Deploy and check your domains to use the API! 🎉
+
+</details>
 
 ## 🤝 Contribute
 Contributions are welcome! Feel free to open issues or submit pull requests!
