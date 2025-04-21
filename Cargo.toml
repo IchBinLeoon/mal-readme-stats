@@ -7,6 +7,10 @@ description = "Dynamically generated MyAnimeList stats for your profile readme"
 license = "MIT"
 
 [[bin]]
+name = "statistics"
+path = "api/statistics/[media]/[user].rs"
+
+[[bin]]
 name = "activity"
 path = "api/activity/[media]/[user].rs"
 

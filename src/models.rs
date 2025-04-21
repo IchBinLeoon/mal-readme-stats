@@ -10,6 +10,46 @@ pub enum Media {
 }
 
 #[derive(Deserialize)]
+pub struct JikanResponse<T> {
+    pub data: T,
+}
+
+#[derive(Deserialize)]
+pub struct Statistics {
+    pub anime: AnimeStatistics,
+    pub manga: MangaStatistics,
+}
+
+#[derive(Deserialize)]
+pub struct AnimeStatistics {
+    pub days_watched: f32,
+    pub mean_score: f32,
+    pub watching: u32,
+    pub completed: u32,
+    pub on_hold: u32,
+    pub dropped: u32,
+    pub plan_to_watch: u32,
+    pub total_entries: u32,
+    pub rewatched: u32,
+    pub episodes_watched: u32,
+}
+
+#[derive(Deserialize)]
+pub struct MangaStatistics {
+    pub days_read: f32,
+    pub mean_score: f32,
+    pub reading: u32,
+    pub completed: u32,
+    pub on_hold: u32,
+    pub dropped: u32,
+    pub plan_to_read: u32,
+    pub total_entries: u32,
+    pub reread: u32,
+    pub chapters_read: u32,
+    pub volumes_read: u32,
+}
+
+#[derive(Deserialize)]
 pub struct AnimeList {
     pub data: Vec<AnimeEntry>,
 }

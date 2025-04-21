@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="https://github.com/IchBinLeoon/mal-readme-stats/deployments/Production">
-    <img src="https://img.shields.io/github/deployments/IchBinLeoon/mal-readme-stats/production?style=flat-square&label=Production" alt="Production">
+    <img src="https://img.shields.io/github/deployments/IchBinLeoon/mal-readme-stats/Production?style=flat-square&label=production" alt="Production">
   </a>
   <a href="https://github.com/IchBinLeoon/mal-readme-stats/commits/main">
     <img src="https://img.shields.io/github/last-commit/IchBinLeoon/mal-readme-stats?style=flat-square" alt="Commit">
@@ -32,6 +32,27 @@ Because your GitHub profile deserves more than just commit streaks. Why flex you
 ## 🚀 Usage
 Replace `[media]` with either `anime` or `manga` and `[user]` with your MyAnimeList username.
 
+### Statistics
+```
+[![Statistics](https://mal-readme-stats.vercel.app/api/statistics/[media]/[user])](https://github.com/IchBinLeoon/mal-readme-stats)
+```
+
+<details>
+<summary>Show anime example</summary>
+<br>
+
+[![Anime Statistics](https://mal-readme-stats.vercel.app/api/statistics/anime/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
+
+</details>
+
+<details>
+<summary>Show manga example</summary>
+<br>
+
+[![Manga Statistics](https://mal-readme-stats.vercel.app/api/statistics/manga/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
+
+</details>
+
 ### Activity
 ```
 [![Activity](https://mal-readme-stats.vercel.app/api/activity/[media]/[user])](https://github.com/IchBinLeoon/mal-readme-stats)
@@ -41,6 +62,7 @@ You can pass the query parameter `?limit=` to specify the number of entries. The
 
 <details>
 <summary>Show anime example</summary>
+<br>
 
 [![Anime Activity](https://mal-readme-stats.vercel.app/api/activity/anime/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
 
@@ -48,13 +70,11 @@ You can pass the query parameter `?limit=` to specify the number of entries. The
 
 <details>
 <summary>Show manga example</summary>
+<br>
 
 [![Manga Activity](https://mal-readme-stats.vercel.app/api/activity/manga/IchBinLeoon)](https://github.com/IchBinLeoon/mal-readme-stats)
 
 </details>
-
-### Statistics
-_Coming soon..._
 
 ## 🔧 Deploy your own
 
@@ -64,6 +84,7 @@ _Coming soon..._
 
 <details>
 <summary>Step-by-step guide</summary>
+<br>
 
 1. Register or log in to [Vercel](https://vercel.com).
 2. Fork this repository and import it.

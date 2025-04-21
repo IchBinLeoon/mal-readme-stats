@@ -1,4 +1,6 @@
-use crate::models::{AnimeList, MangaList, Media};
+use crate::models::{
+    AnimeList, AnimeStatistics, JikanResponse, MangaList, MangaStatistics, Media, Statistics,
+};
 use anyhow::{Result, bail};
 use reqwest::Client;
 use serde::de::DeserializeOwned;
@@ -9,11 +11,13 @@ pub mod models;
 pub mod svg;
 pub mod utils;
 
-const BASE_URL: &str = "https://api.myanimelist.net/v2/";
+const MAL_BASE_URL: &str = "https://api.myanimelist.net/v2/";
+const JIKAN_BASE_URL: &str = "https://api.jikan.moe/v4/";
 
 pub struct MalClient {
     client: Client,
-    base_url: Url,
+    mal_base_url: Url,
+    jikan_base_url: Url,
     client_id: String,
 }
 
@@ -21,17 +25,18 @@ impl MalClient {
     pub fn new() -> Result<Self> {
         Ok(Self {
             client: Client::new(),
-            base_url: Url::parse(BASE_URL)?,
+            mal_base_url: Url::parse(MAL_BASE_URL)?,
+            jikan_base_url: Url::parse(JIKAN_BASE_URL)?,
             client_id: env::var("CLIENT_ID")?,
         })
     }
 
-    async fn request<T: DeserializeOwned>(
+    async fn request_mal<T: DeserializeOwned>(
         &self,
         path: &str,
         params: Option<Vec<(&str, &str)>>,
     ) -> Result<T> {
-        let mut url = self.base_url.join(path)?;
+        let mut url = self.mal_base_url.join(path)?;
 
         if let Some(params) = params {
             let mut pairs = url.query_pairs_mut();
@@ -60,6 +65,28 @@ impl MalClient {
         Ok(res.json::<T>().await?)
     }
 
+    async fn request_jikan<T: DeserializeOwned>(&self, path: &str) -> Result<T> {
+        let url = self.jikan_base_url.join(path)?;
+
+        let res = self.client.get(url).send().await?;
+
+        if !res.status().is_success() {
+            bail!(
+                "Request to '{}' failed with status code {}: {}",
+                res.url().clone(),
+                res.status(),
+                res.text().await?,
+            );
+        }
+
+        Ok(res.json::<JikanResponse<T>>().await?.data)
+    }
+
+    async fn get_user_statistics(&self, user: &str) -> Result<Statistics> {
+        self.request_jikan(&format!("users/{}/statistics", user))
+            .await
+    }
+
     async fn get_user_activity<T: DeserializeOwned>(
         &self,
         media: Media,
@@ -79,8 +106,16 @@ impl MalClient {
             ("limit", &limit),
         ];
 
-        self.request(&format!("users/{}/{}list", user, media), Some(params))
+        self.request_mal(&format!("users/{}/{}list", user, media), Some(params))
             .await
+    }
+
+    pub async fn get_user_anime_statistics(&self, user: &str) -> Result<AnimeStatistics> {
+        Ok(self.get_user_statistics(user).await?.anime)
+    }
+
+    pub async fn get_user_manga_statistics(&self, user: &str) -> Result<MangaStatistics> {
+        Ok(self.get_user_statistics(user).await?.manga)
     }
 
     pub async fn get_user_anime_activity(

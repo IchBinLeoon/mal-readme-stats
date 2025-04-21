@@ -1,6 +1,17 @@
-use crate::models::{AnimeList, MangaList, ReadStatus, WatchStatus};
+use crate::models::{
+    AnimeList, AnimeStatistics, MangaList, MangaStatistics, ReadStatus, WatchStatus,
+};
 use crate::utils::fetch_image_base64;
 use quick_xml::escape::minimal_escape;
+
+const STATISTICS_PADDING: usize = 15;
+const STATISTICS_WIDTH: usize = 500 + 2 * STATISTICS_PADDING;
+const STATISTICS_HEIGHT: usize = 215;
+
+const STATISTICS_BAR_WIDTH: usize = STATISTICS_WIDTH - 2 * STATISTICS_PADDING;
+const STATISTICS_BAR_HEIGHT: usize = 16;
+
+const STATISTICS_X_VALUE_OFFSET: usize = STATISTICS_PADDING + 200;
 
 const ACTIVITY_PADDING: usize = 15;
 const ACTIVITY_WIDTH: usize = 500 + 2 * ACTIVITY_PADDING;
@@ -25,6 +36,233 @@ const COLOR_BACKGROUND: &str = "#111111";
 
 pub trait ToSvg {
     fn to_svg(&self) -> impl Future<Output = String>;
+}
+
+impl ToSvg for AnimeStatistics {
+    async fn to_svg(&self) -> String {
+        let mut svg = String::new();
+
+        svg.push_str(&format!(
+            r#"<svg xmlns="http://www.w3.org/2000/svg" width="{}" height="{}">"#,
+            STATISTICS_WIDTH, STATISTICS_HEIGHT
+        ));
+
+        svg.push_str(&format!(
+            r#"<rect width="{}" height="{}" fill="{}" rx="10"/>"#,
+            STATISTICS_WIDTH, STATISTICS_HEIGHT, COLOR_BACKGROUND
+        ));
+
+        svg.push_str(&format!(
+            r#"<text x="{}" y="{}" font-family="Arial" font-size="20" fill="white">Days: <tspan font-weight="bold">{}</tspan></text>"#,
+            STATISTICS_PADDING,
+            STATISTICS_PADDING + 20,
+            self.days_watched
+        ));
+
+        svg.push_str(&format!(
+            r#"<text x="{}" y="{}" font-family="Arial" font-size="20" fill="white" text-anchor="end">Mean Score: <tspan font-weight="bold">{}</tspan></text>"#,
+            STATISTICS_WIDTH - STATISTICS_PADDING,
+            STATISTICS_PADDING + 20,
+            self.mean_score,
+        ));
+
+        let mut bar_x_offset = STATISTICS_PADDING as f32;
+
+        let statuses = [
+            (self.watching, COLOR_GREEN),
+            (self.completed, COLOR_BLUE),
+            (self.on_hold, COLOR_YELLOW),
+            (self.dropped, COLOR_RED),
+            (self.plan_to_watch, COLOR_GRAY),
+        ];
+
+        for (count, color) in statuses {
+            if count > 0 {
+                let width =
+                    STATISTICS_BAR_WIDTH as f32 * (count as f32 / self.total_entries as f32);
+
+                svg.push_str(&format!(
+                    r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
+                    bar_x_offset,
+                    STATISTICS_PADDING + 40,
+                    width,
+                    STATISTICS_BAR_HEIGHT,
+                    color
+                ));
+
+                bar_x_offset += width;
+            }
+        }
+
+        let mut left_values_y_offset = STATISTICS_PADDING + 80;
+
+        let left_values = [
+            ("Watching", self.watching),
+            ("Completed", self.completed),
+            ("On Hold", self.on_hold),
+            ("Dropped", self.dropped),
+            ("Plan to Watch", self.plan_to_watch),
+        ];
+
+        for (name, value) in left_values {
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
+                STATISTICS_PADDING, left_values_y_offset, name
+            ));
+
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
+                STATISTICS_X_VALUE_OFFSET,
+                left_values_y_offset,
+                value
+            ));
+
+            left_values_y_offset += 25;
+        }
+
+        let mut right_values_y_offset = STATISTICS_PADDING + 80;
+
+        let right_values = [
+            ("Total Entries", self.total_entries),
+            ("Rewatched", self.rewatched),
+            ("Episodes", self.episodes_watched),
+        ];
+
+        for (name, value) in right_values {
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
+                STATISTICS_WIDTH - STATISTICS_X_VALUE_OFFSET,
+                right_values_y_offset,
+                name
+            ));
+
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
+                STATISTICS_WIDTH - STATISTICS_PADDING,
+                right_values_y_offset,
+                value
+            ));
+
+            right_values_y_offset += 30;
+        }
+
+        svg.push_str("</svg>");
+        svg
+    }
+}
+
+impl ToSvg for MangaStatistics {
+    async fn to_svg(&self) -> String {
+        let mut svg = String::new();
+
+        svg.push_str(&format!(
+            r#"<svg xmlns="http://www.w3.org/2000/svg" width="{}" height="{}">"#,
+            STATISTICS_WIDTH, STATISTICS_HEIGHT
+        ));
+
+        svg.push_str(&format!(
+            r#"<rect width="{}" height="{}" fill="{}" rx="10"/>"#,
+            STATISTICS_WIDTH, STATISTICS_HEIGHT, COLOR_BACKGROUND
+        ));
+
+        svg.push_str(&format!(
+            r#"<text x="{}" y="{}" font-family="Arial" font-size="20" fill="white">Days: <tspan font-weight="bold">{}</tspan></text>"#,
+            STATISTICS_PADDING,
+            STATISTICS_PADDING + 20,
+            self.days_read
+        ));
+
+        svg.push_str(&format!(
+            r#"<text x="{}" y="{}" font-family="Arial" font-size="20" fill="white" text-anchor="end">Mean Score: <tspan font-weight="bold">{}</tspan></text>"#,
+            STATISTICS_WIDTH - STATISTICS_PADDING,
+            STATISTICS_PADDING + 20,
+            self.mean_score,
+        ));
+
+        let mut bar_x_offset = STATISTICS_PADDING as f32;
+
+        let statuses = [
+            (self.reading, COLOR_GREEN),
+            (self.completed, COLOR_BLUE),
+            (self.on_hold, COLOR_YELLOW),
+            (self.dropped, COLOR_RED),
+            (self.plan_to_read, COLOR_GRAY),
+        ];
+
+        for (count, color) in statuses {
+            if count > 0 {
+                let width =
+                    STATISTICS_BAR_WIDTH as f32 * (count as f32 / self.total_entries as f32);
+
+                svg.push_str(&format!(
+                    r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
+                    bar_x_offset,
+                    STATISTICS_PADDING + 40,
+                    width,
+                    STATISTICS_BAR_HEIGHT,
+                    color
+                ));
+
+                bar_x_offset += width;
+            }
+        }
+
+        let mut left_values_y_offset = STATISTICS_PADDING + 80;
+
+        let left_values = [
+            ("Reading", self.reading),
+            ("Completed", self.completed),
+            ("On Hold", self.on_hold),
+            ("Dropped", self.dropped),
+            ("Plan to Read", self.plan_to_read),
+        ];
+
+        for (name, value) in left_values {
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
+                STATISTICS_PADDING, left_values_y_offset, name
+            ));
+
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
+                STATISTICS_X_VALUE_OFFSET,
+                left_values_y_offset,
+                value
+            ));
+
+            left_values_y_offset += 25;
+        }
+
+        let mut right_values_y_offset = STATISTICS_PADDING + 80;
+
+        let right_values = [
+            ("Total Entries", self.total_entries),
+            ("Reread", self.reread),
+            ("Chapters", self.chapters_read),
+            ("Volumes", self.volumes_read),
+        ];
+
+        for (name, value) in right_values {
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
+                STATISTICS_WIDTH - STATISTICS_X_VALUE_OFFSET,
+                right_values_y_offset,
+                name
+            ));
+
+            svg.push_str(&format!(
+                r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white" text-anchor="end">{}</text>"#,
+                STATISTICS_WIDTH - STATISTICS_PADDING,
+                right_values_y_offset,
+                value
+            ));
+
+            right_values_y_offset += 30;
+        }
+
+        svg.push_str("</svg>");
+        svg
+    }
 }
 
 impl ToSvg for AnimeList {
