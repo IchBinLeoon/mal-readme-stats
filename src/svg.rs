@@ -6,12 +6,13 @@ use quick_xml::escape::minimal_escape;
 
 const STATISTICS_PADDING: usize = 15;
 const STATISTICS_WIDTH: usize = 500 + 2 * STATISTICS_PADDING;
-const STATISTICS_HEIGHT: usize = 215;
+const STATISTICS_HEIGHT: usize = 225;
 
 const STATISTICS_BAR_WIDTH: usize = STATISTICS_WIDTH - 2 * STATISTICS_PADDING;
 const STATISTICS_BAR_HEIGHT: usize = 16;
 
 const STATISTICS_X_VALUE_OFFSET: usize = STATISTICS_PADDING + 200;
+const STATISTICS_CIRCLE_RADIUS: usize = 5;
 
 const ACTIVITY_PADDING: usize = 15;
 const ACTIVITY_WIDTH: usize = 500 + 2 * ACTIVITY_PADDING;
@@ -67,19 +68,20 @@ impl ToSvg for AnimeStatistics {
         ));
 
         let mut bar_x_offset = STATISTICS_PADDING as f32;
+        let mut left_values_y_offset = STATISTICS_PADDING + 85;
 
-        let statuses = [
-            (self.watching, COLOR_GREEN),
-            (self.completed, COLOR_BLUE),
-            (self.on_hold, COLOR_YELLOW),
-            (self.dropped, COLOR_RED),
-            (self.plan_to_watch, COLOR_GRAY),
+        let left_values = [
+            ("Watching", self.watching, COLOR_GREEN),
+            ("Completed", self.completed, COLOR_BLUE),
+            ("On Hold", self.on_hold, COLOR_YELLOW),
+            ("Dropped", self.dropped, COLOR_RED),
+            ("Plan to Watch", self.plan_to_watch, COLOR_GRAY),
         ];
 
-        for (count, color) in statuses {
-            if count > 0 {
+        for (name, value, color) in left_values {
+            if value > 0 {
                 let width =
-                    STATISTICS_BAR_WIDTH as f32 * (count as f32 / self.total_entries as f32);
+                    STATISTICS_BAR_WIDTH as f32 * (value as f32 / self.total_entries as f32);
 
                 svg.push_str(&format!(
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
@@ -92,22 +94,20 @@ impl ToSvg for AnimeStatistics {
 
                 bar_x_offset += width;
             }
-        }
 
-        let mut left_values_y_offset = STATISTICS_PADDING + 80;
+            svg.push_str(&format!(
+                r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#,
+                STATISTICS_PADDING + STATISTICS_CIRCLE_RADIUS,
+                left_values_y_offset - STATISTICS_CIRCLE_RADIUS,
+                STATISTICS_CIRCLE_RADIUS,
+                color
+            ));
 
-        let left_values = [
-            ("Watching", self.watching),
-            ("Completed", self.completed),
-            ("On Hold", self.on_hold),
-            ("Dropped", self.dropped),
-            ("Plan to Watch", self.plan_to_watch),
-        ];
-
-        for (name, value) in left_values {
             svg.push_str(&format!(
                 r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
-                STATISTICS_PADDING, left_values_y_offset, name
+                STATISTICS_PADDING + 2 * STATISTICS_CIRCLE_RADIUS + 10,
+                left_values_y_offset,
+                name
             ));
 
             svg.push_str(&format!(
@@ -120,7 +120,7 @@ impl ToSvg for AnimeStatistics {
             left_values_y_offset += 25;
         }
 
-        let mut right_values_y_offset = STATISTICS_PADDING + 80;
+        let mut right_values_y_offset = STATISTICS_PADDING + 85;
 
         let right_values = [
             ("Total Entries", self.total_entries),
@@ -180,19 +180,20 @@ impl ToSvg for MangaStatistics {
         ));
 
         let mut bar_x_offset = STATISTICS_PADDING as f32;
+        let mut left_values_y_offset = STATISTICS_PADDING + 85;
 
-        let statuses = [
-            (self.reading, COLOR_GREEN),
-            (self.completed, COLOR_BLUE),
-            (self.on_hold, COLOR_YELLOW),
-            (self.dropped, COLOR_RED),
-            (self.plan_to_read, COLOR_GRAY),
+        let left_values = [
+            ("Reading", self.reading, COLOR_GREEN),
+            ("Completed", self.completed, COLOR_BLUE),
+            ("On Hold", self.on_hold, COLOR_YELLOW),
+            ("Dropped", self.dropped, COLOR_RED),
+            ("Plan to Read", self.plan_to_read, COLOR_GRAY),
         ];
 
-        for (count, color) in statuses {
-            if count > 0 {
+        for (name, value, color) in left_values {
+            if value > 0 {
                 let width =
-                    STATISTICS_BAR_WIDTH as f32 * (count as f32 / self.total_entries as f32);
+                    STATISTICS_BAR_WIDTH as f32 * (value as f32 / self.total_entries as f32);
 
                 svg.push_str(&format!(
                     r#"<rect x="{}" y="{}" width="{}" height="{}" fill="{}"/>"#,
@@ -205,22 +206,20 @@ impl ToSvg for MangaStatistics {
 
                 bar_x_offset += width;
             }
-        }
 
-        let mut left_values_y_offset = STATISTICS_PADDING + 80;
+            svg.push_str(&format!(
+                r#"<circle cx="{}" cy="{}" r="{}" fill="{}"/>"#,
+                STATISTICS_PADDING + STATISTICS_CIRCLE_RADIUS,
+                left_values_y_offset - STATISTICS_CIRCLE_RADIUS,
+                STATISTICS_CIRCLE_RADIUS,
+                color
+            ));
 
-        let left_values = [
-            ("Reading", self.reading),
-            ("Completed", self.completed),
-            ("On Hold", self.on_hold),
-            ("Dropped", self.dropped),
-            ("Plan to Read", self.plan_to_read),
-        ];
-
-        for (name, value) in left_values {
             svg.push_str(&format!(
                 r#"<text x="{}" y="{}" font-family="Arial" font-size="16" fill="white">{}</text>"#,
-                STATISTICS_PADDING, left_values_y_offset, name
+                STATISTICS_PADDING + 2 * STATISTICS_CIRCLE_RADIUS + 10,
+                left_values_y_offset,
+                name
             ));
 
             svg.push_str(&format!(
@@ -233,7 +232,7 @@ impl ToSvg for MangaStatistics {
             left_values_y_offset += 25;
         }
 
-        let mut right_values_y_offset = STATISTICS_PADDING + 80;
+        let mut right_values_y_offset = STATISTICS_PADDING + 85;
 
         let right_values = [
             ("Total Entries", self.total_entries),
